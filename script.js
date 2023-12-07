@@ -332,22 +332,57 @@ BandMatrix.prototype.scaleAdd = function (scalar, row1, row2) {
   return this
 }
 
+// 调整两个按钮的位置
+let reposFn = function () {
+  const element = document.getElementsByClassName('right-align-tools')[0]
+  const children = element.children
+  let elementWidth = 0
+  for (let i = 0; i < children.length; i++) {
+    elementWidth += children[i].offsetWidth
+  }
+  const windowWidth = window.innerWidth
+  const threshold = windowWidth * 0.5 - elementWidth + 10
+  if (elementWidth > threshold) {
+    element.style.float = 'right'
+    element.style.right = '0px'
+    element.style.left = 'auto'
+  } else {
+    element.style.float = 'none'
+    element.style.left = 'calc(50% + 90px)'
+    element.style.right = 'auto'
+  }
+}
+window.addEventListener('load', reposFn)
+window.addEventListener('resize', reposFn)
 
+// 设置目录交互逻辑
+const qol = document.getElementById('qlist')
+const questions = qol.getElementsByTagName('li')
 
+qol.addEventListener('click', function (ev) {
+  for (let i = 0; i < questions.length; i++) {
+    let li = questions[i]
+    if (li == ev.target) li.classList.add('active')
+    else li.classList.remove('active')
+  }
+})
 
-// 读取本地dat文件
-// const fileInput = document.createElement('input');
-// fileInput.type = 'file';
-
+// 读取矩阵文件并求解
 const fileInput = document.getElementById('q3input')
 const fileInfoTds = document.getElementById('q3info').getElementsByTagName('td')
 const formulaDisplay = document.getElementById('q3formula')
+const rightAlignTools = document.getElementsByClassName('right-align-tools')[0]
+
+let coeffMatStr, constVecStr, ansVec
+let precision = 4
 
 fileInput.addEventListener('change', (ev) => {
   const file = ev.target.files[0];
   const reader = new FileReader();
-
   const filename = fileInput.files[0].name
+
+  rightAlignTools.style.display = 'block'
+  reposFn()
 
   reader.addEventListener('load', (ev) => {
     const fileContent = ev.target.result;
@@ -379,10 +414,9 @@ fileInput.addEventListener('change', (ev) => {
 
     let coeffMat = isCompressed ? new BandMatrix(coefficients, lbw, ubw) : new Matrix(coefficients)
     let constVec = new Matrix(constArray).transpose()
-    let ansVec
 
-    let coeffMatStr = coeffMat.latex()
-    let constVecStr = constVec.latex()
+    coeffMatStr = coeffMat.latex()
+    constVecStr = constVec.latex()
 
     formulaDisplay.innerText = `$$${coeffMatStr}` + '\\begin{bmatrix}' + '?\\\\'.repeat(9) + (order == 10 ? '?' : '\\vdots') + '\\end{bmatrix}' + `=${constVecStr}$$`
 
@@ -400,7 +434,7 @@ fileInput.addEventListener('change', (ev) => {
 
       fileInfoTds[fileInfoTds.length - 1].innerText = elapsedTime.toFixed(1) + 'ms'
 
-      formulaDisplay.innerText = `$$${coeffMatStr}` + ansVec.latex(4) + `=${constVecStr}$$`
+      formulaDisplay.innerText = `$$${coeffMatStr}` + ansVec.latex(precision) + `=${constVecStr}$$`
 
       renderMathInElement(formulaDisplay, {
         delimiters: [
@@ -411,5 +445,21 @@ fileInput.addEventListener('change', (ev) => {
   })
 
   reader.readAsArrayBuffer(file);
+})
+
+// 修改精确位数后刷新
+const q3PrecisionSpan = document.getElementById('q3precision-span')
+q3PrecisionSpan.addEventListener('click', () => document.getElementById('q3precision').focus())
+q3PrecisionSpan.addEventListener('keydown', (ev) => {
+  if (ev.key == 'Enter') {
+    ev.target.blur()
+    precision = parseInt(document.getElementById('q3precision').innerText)
+    formulaDisplay.innerText = `$$${coeffMatStr}` + ansVec.latex(precision) + `=${constVecStr}$$`
+    renderMathInElement(formulaDisplay, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true }
+      ]
+    })
+  }
 })
 

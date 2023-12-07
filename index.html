@@ -23,7 +23,7 @@
     <nav class="sidebar">
       <div class="navblock qli">
         <h3>💻 计算方法<br>上机题目演示</h3>
-        <ol>
+        <ol id="qlist">
           <li>海底光缆铺设</li>
           <li>粉丝数量分析</li>
           <li>大规模稀疏线性方程组的求解</li>
@@ -44,27 +44,10 @@
         <div id="q3head">
           <h1>Q3: 大规模稀疏线性方程组的求解</h1>
           <div style="width: 20px;"></div>
-          <label for="q3input" id="q3inputBtn">选择文件</label>
+          <label for="q3input" id="q3inputBtn" class="round-ends-label clickable">选择文件</label>
           <input type="file" id="q3input">
         </div>
         <div class="flexbox">
-          <!-- <div id="q3info">
-            <span>文件名：</span>
-            <label id="q3filename"></label>
-            <br>
-            <span>id：</span>
-            <label></label>
-            <br>
-            <span>阶数：</span>
-            <label></label>
-            <br>
-            <span>上带宽：</span>
-            <label></label>
-            <br>
-            <span>下带宽：</span>
-            <label></label>
-            <br>
-          </div> -->
           <div class="hori-container">
             <table id="q3info">
               <tr>
@@ -86,10 +69,20 @@
             </table>
           </div>
           <div class="hori-container" id="q3formula"></div>
+          <div class="right-align-tools" style="display: none;">
+            <span class="round-ends-label" id="q3precision-span">
+              <span>有效数字：</span>
+              <label id="q3precision" contenteditable="true">4</label>
+            </span>
+            <label class="round-ends-label clickable" style="margin-left: 10px;">保存结果</label>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <script>
+    
+  </script>
   <script src="script.js"></script>
 </body>
 

@@ -50,17 +50,25 @@ h3 {
   padding-left: 5px;
 }
 
-ol {
+#qlist {
   padding-left: 30px;
 }
 
-li {
+#qlist li {
   color: gray;
   transition: 0.3s;
 }
 
-li:hover {
-  color: black
+#qlist li:hover {
+  color: black;
+}
+
+#qlist li:active {
+  color: black;
+}
+
+#qlist .active {
+  color: black;
 }
 
 .content {
@@ -101,7 +109,7 @@ a {
   display: none;
 }
 
-#q3inputBtn {
+.round-ends-label {
   padding: 5px 20px;
   color: var(--navi-blue);
   border: 1px solid var(--navi-blue);
@@ -110,7 +118,7 @@ a {
   transition: 0.3s;
 }
 
-#q3inputBtn:hover {
+.clickable:hover {
   color: var(--block-bgcolor);
   background-color: var(--navi-blue);
 }
@@ -121,9 +129,8 @@ a {
 }
 
 #q3formula {
-  /* width: calc(100vw - var(--navblock-width) - 30px - 40px); */
-  /* width: calc(100%); */
-  padding-top: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 #q3head {
@@ -151,4 +158,17 @@ table {
   text-align: center;
   border-left: 1px solid #456789;
   border-right: 1px solid #456789;
+}
+
+.right-align-tools {
+  padding-bottom: 20px;
+  position: relative;
+}
+
+#q3precision {
+  white-space: nowrap;
+}
+
+#q3precision:focus {
+  outline: none;
 }
