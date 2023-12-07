@@ -24,6 +24,7 @@ body {
   display: flex;
   flex-direction: column;
   width: var(--navblock-width);
+  min-width: var(--navblock-width);
   padding: 5px 10px;
 }
 
@@ -41,6 +42,7 @@ body {
 .infoli {
   padding: 10px 15px;
   flex: 1;
+  overflow: auto;
 }
 
 h3 {
@@ -62,16 +64,18 @@ li:hover {
 }
 
 .content {
-  width: calc(100vw - var(--navblock-width));
+  flex: 1;
   padding: 10px 10px;
   padding-left: 0px;
 }
 
 .block {
+  width: calc(100vw - var(--navblock-width) - 70px);
   height: calc(100vh - 30px);
   padding: 5px 20px;
   border-radius: 10px;
   background-color: var(--block-bgcolor);
+  overflow: auto;
 }
 
 del {
@@ -98,10 +102,11 @@ a {
 }
 
 #q3inputBtn {
-  padding: 10px 25px;
+  padding: 5px 20px;
   color: var(--navi-blue);
   border: 1px solid var(--navi-blue);
   border-radius: 60px;
+  white-space: nowrap;
   transition: 0.3s;
 }
 
@@ -110,8 +115,40 @@ a {
   background-color: var(--navi-blue);
 }
 
-#q3display {
-  width: calc(100vw - var(--navblock-width) - 30px - 40px);
-  padding-top: 20px;
+.hori-container {
+  align-items: center;
   overflow: auto;
+}
+
+#q3formula {
+  /* width: calc(100vw - var(--navblock-width) - 30px - 40px); */
+  /* width: calc(100%); */
+  padding-top: 20px;
+}
+
+#q3head {
+  display: flex;
+  align-items: center;
+}
+
+table {
+  margin: auto;
+  border-collapse: collapse;
+}
+
+#q3info th {
+  min-width: 110px;
+  font-weight: normal;
+  background-color: #e4e9ee;
+}
+
+#q3info td {
+  background-color: #eef3f8;
+}
+
+#q3info th, td {
+  padding: 2px 5px;
+  text-align: center;
+  border-left: 1px solid #456789;
+  border-right: 1px solid #456789;
 }

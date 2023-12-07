@@ -340,15 +340,14 @@ BandMatrix.prototype.scaleAdd = function (scalar, row1, row2) {
 // fileInput.type = 'file';
 
 const fileInput = document.getElementById('q3input')
-const filenameLabel = document.getElementById('q3filename')
-const formulaDisplay = document.getElementById('q3display')
+const fileInfoTds = document.getElementById('q3info').getElementsByTagName('td')
+const formulaDisplay = document.getElementById('q3formula')
 
 fileInput.addEventListener('change', (ev) => {
   const file = ev.target.files[0];
   const reader = new FileReader();
 
   const filename = fileInput.files[0].name
-  filenameLabel.innerText = filename
 
   reader.addEventListener('load', (ev) => {
     const fileContent = ev.target.result;
@@ -361,6 +360,12 @@ fileInput.addEventListener('change', (ev) => {
     let ubw = infoArray[4]
     let lbw = infoArray[5]
     let nCols = isCompressed ? Math.min(ubw + lbw + 1, order) : order
+
+    let infoList = [filename, infoArray[0], order, ubw, lbw]
+
+    for (let i = 0; i < 5; i++) {
+      fileInfoTds[i].innerText = infoList[i];
+    }
 
 
     const dataArray = new Float32Array(fileContent.slice(24))
@@ -388,9 +393,12 @@ fileInput.addEventListener('change', (ev) => {
     })
 
     setTimeout(() => {
-      console.time('Elapsed Time')
+      let startTime = performance.now()
       ansVec = coeffMat.solve(constVec)
-      console.timeEnd('Elapsed Time')
+      let endTime = performance.now()
+      let elapsedTime = endTime - startTime
+
+      fileInfoTds[fileInfoTds.length - 1].innerText = elapsedTime.toFixed(1) + 'ms'
 
       formulaDisplay.innerText = `$$${coeffMatStr}` + ansVec.latex(4) + `=${constVecStr}$$`
 
