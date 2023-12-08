@@ -347,7 +347,7 @@ let reposFn = function () {
     element.style.right = '0px'
     element.style.left = 'auto'
   } else {
-    element.style.float = 'none'
+    element.style.float = 'left'
     element.style.left = 'calc(50% + 90px)'
     element.style.right = 'auto'
   }
