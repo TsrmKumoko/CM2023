@@ -12,11 +12,13 @@
 body {
   margin: 0;
   font-family: Avenir;
+  overflow: hidden;
 }
 
 .container {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -74,14 +76,28 @@ h3 {
   flex: 1;
   padding: 10px 10px;
   padding-left: 0px;
+  overflow: hidden;
 }
 
 .block {
+  /* display: none; */
+  opacity: 1;
   width: calc(100vw - var(--navblock-width) - 70px);
-  height: calc(100vh - 30px);
-  padding: 5px 20px;
+  height: 0;
+  /* height: calc(100vh - 30px); */
+  padding: 0px 20px;
+  /* padding: 5px 20px; */
   border-radius: 10px;
   background-color: var(--block-bgcolor);
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.block.active {
+  /* display: block; */
+  opacity: 1;
+  height: calc(100vh - 30px);
+  padding: 5px 20px;
   overflow: auto;
 }
 

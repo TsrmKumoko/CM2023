@@ -358,13 +358,25 @@ window.addEventListener('resize', reposFn)
 // 设置目录交互逻辑
 const qol = document.getElementById('qlist')
 const questions = qol.getElementsByTagName('li')
+const qblocks = document.getElementsByClassName('block')
+questions[0].classList.add('active')
+qblocks[0].classList.add('active')
 
 qol.addEventListener('click', function (ev) {
   for (let i = 0; i < questions.length; i++) {
-    let li = questions[i]
-    if (li == ev.target) li.classList.add('active')
-    else li.classList.remove('active')
+    if (questions[i] == ev.target) {
+      // questions[i].classList.add('active')
+      // qblocks[i].classList.add('active')
+      var tgtIdx = i
+      // qblocks[i].style.display = 'block'
+    } else {
+      questions[i].classList.remove('active')
+      qblocks[i].classList.remove('active')
+      // qblocks[i].style.display = 'none'
+    }
   }
+  questions[tgtIdx].classList.add('active')
+  qblocks[tgtIdx].classList.add('active')
 })
 
 // 读取矩阵文件并求解
