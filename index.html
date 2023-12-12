@@ -41,13 +41,27 @@
     </nav>
     <div class="content">
       <div class="block" id="q1block">
-        <h1>Q1: 海底光缆铺设</h1>
+        <div class="qhead">
+          <h1>Q1: 海底光缆铺设</h1>
+          <div style="width: 20px;"></div>
+          <div>
+            <label id="q1inputBtn" class="round-ends-label">
+              <label>选择算法</label>
+              <label class="dropdown-arrow"></label>
+            </label>
+            <div class="dropdown" id="q1select">
+              <div class="dropdown-option">分段线性插值</div><hr class="dropdown-hr">
+              <div class="dropdown-option">分段二次插值</div><hr class="dropdown-hr">
+              <div class="dropdown-option">三次样条插值</div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="block" id="q2block">
         <h1>Q2: 粉丝数量分析</h1>
       </div>
       <div class="block" id="q3block">
-        <div id="q3head">
+        <div class="qhead">
           <h1>Q3: 大规模稀疏线性方程组的求解</h1>
           <div style="width: 20px;"></div>
           <label for="q3input" id="q3inputBtn" class="round-ends-label clickable">选择文件</label>

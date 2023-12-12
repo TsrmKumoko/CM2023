@@ -144,7 +144,7 @@ a {
   margin-bottom: 10px;
 }
 
-#q3head {
+.qhead {
   display: flex;
   align-items: center;
 }
@@ -178,4 +178,52 @@ table {
 
 #q3precision:focus {
   outline: none;
+}
+
+.dropdown-arrow {
+  width: 0;
+  height: 0;
+  display: inline-block;
+  border: 5px solid transparent;
+  border-right: 8px solid #456789;
+  transition: 0.3s ease-in-out;
+}
+
+.dropdown-arrow.active {
+  transform-origin: 9.3px 5px;
+  transform: rotate(-90deg);
+}
+
+.dropdown {
+  position: absolute;
+  opacity: 0;
+  margin-top: 15px;
+  padding: 5px 20px;
+  border: 1px solid var(--navi-blue);
+  border-radius: 17px;
+  background-color: var(--block-bgcolor);
+  box-shadow: 5px 5px 10px rgba(99, 99, 99, 0.3);
+  transition: 0.3s ease-in-out;
+}
+
+.dropdown.active {
+  opacity: 1;
+}
+
+.dropdown-option {
+  margin: 5px 0px;
+  color: #939ba4;
+  transition: 0.3s;
+}
+
+.dropdown-option:hover {
+  color: #456789;
+}
+
+.dropdown-option.active {
+  color: #456789;
+}
+
+.dropdown-hr {
+  margin: 0px -10px;
 }
