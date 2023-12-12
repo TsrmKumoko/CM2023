@@ -385,6 +385,9 @@ const fileInfoTds = document.getElementById('q3info').getElementsByTagName('td')
 const formulaDisplay = document.getElementById('q3formula')
 const rightAlignTools = document.getElementsByClassName('right-align-tools')[0]
 
+const q3Download = document.getElementById('q3download')
+q3Download.download = 'result.txt'
+
 let coeffMatStr, constVecStr, ansVec
 let precision = 4
 
@@ -453,6 +456,14 @@ fileInput.addEventListener('change', (ev) => {
           { left: "$$", right: "$$", display: true }
         ]
       })
+
+      // 下载结果文件
+      let content = ''
+      for (let i = 0; i < ansVec.nRows(); i++) {
+        content += ansVec.entry(i, 0).toString() + '\n'
+      }
+      const ansFile = new Blob([content], { type: 'text/plain' })
+      q3Download.href = URL.createObjectURL(ansFile)
     }, 0)
   })
 
@@ -460,18 +471,23 @@ fileInput.addEventListener('change', (ev) => {
 })
 
 // 修改精确位数后刷新
+const q3Precision = document.getElementById('q3precision')
 const q3PrecisionSpan = document.getElementById('q3precision-span')
+
 q3PrecisionSpan.addEventListener('click', () => document.getElementById('q3precision').focus())
 q3PrecisionSpan.addEventListener('keydown', (ev) => {
   if (ev.key == 'Enter') {
     ev.target.blur()
-    precision = parseInt(document.getElementById('q3precision').innerText)
-    formulaDisplay.innerText = `$$${coeffMatStr}` + ansVec.latex(precision) + `=${constVecStr}$$`
-    renderMathInElement(formulaDisplay, {
-      delimiters: [
-        { left: "$$", right: "$$", display: true }
-      ]
-    })
   }
+})
+
+q3Precision.addEventListener('blur', () => {
+  precision = parseInt(q3Precision.innerText)
+  formulaDisplay.innerText = `$$${coeffMatStr}` + ansVec.latex(precision) + `=${constVecStr}$$`
+  renderMathInElement(formulaDisplay, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true }
+    ]
+  })
 })
 
