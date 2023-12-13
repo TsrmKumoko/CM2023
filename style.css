@@ -237,3 +237,15 @@ table {
 .dropdown-hr {
   margin: 0px -10px;
 }
+
+#q1canvas {
+  width: calc(100vw - var(--navblock-width) - 70px);
+  height: 200px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.q1description {
+  max-width: 800px;
+  margin: auto;
+}

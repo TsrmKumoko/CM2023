@@ -37,7 +37,9 @@
         <div class="info">Info:</div>
         <div class="info">这个网页是2023年计算方法上机题目的在线演示 <del>(JavaScript果然很方便呢！)</del></div>
         <div class="info">源代码已经公开在了我的<a href="https://github.com/TsrmKumoko/CM2023">GitHub仓库</a></div>
-        <div class="info">完整的上机报告放在了<a href="https://thankful-magician-400.notion.site/151a6f3eba444b19ba4604f7557848cc?pvs=4">徐云岫’s Notion</a></div>
+        <div class="info">完整的上机报告放在了<a
+            href="https://thankful-magician-400.notion.site/151a6f3eba444b19ba4604f7557848cc?pvs=4">徐云岫’s Notion</a>
+        </div>
       </div>
       <div class="navblock">
         <div id="snowman">⛄️ 雪人上网℡@2023</div>
@@ -54,11 +56,95 @@
               <label class="dropdown-arrow"></label>
             </label>
             <div class="dropdown" id="q1select">
-              <div class="dropdown-option">分段线性插值</div><hr class="dropdown-hr">
-              <div class="dropdown-option">分段二次插值</div><hr class="dropdown-hr">
+              <div class="dropdown-option">分段线性插值</div>
+              <hr class="dropdown-hr">
+              <div class="dropdown-option">分段二次插值</div>
+              <hr class="dropdown-hr">
               <div class="dropdown-option">三次样条插值</div>
             </div>
           </div>
+        </div>
+        <canvas id="q1canvas"></canvas>
+        <div class="q1description">
+          <h2>分段线性插值</h2>
+          <p>分段线性插值算法是所给三种算法中最简单的一种。只需要简单地将相邻的点用线段联结，并计算所有线段的长度，就能获得光缆的近似总长。</p>
+          <p>这种算法的优点是非常简单、易于计算；然而缺点也很明显，计算结果将与实际结果相差较大（而且一定偏小）。对于估算光缆长度这类问题不是特别适用。</p>
+          <p>分段线性插值算法的光缆长度估算公式为：</p>
+          <div>
+            $$
+              L = \sum_{i=1}^{50} \sqrt{(d_i - d_{i-1})^2 + h^2}
+            $$
+          </div>
+          <p>其中 \(d_i\) 是第 \(i\) 个点的深度，\(h\) 是相邻两点的水平距离。</p>
+        </div>
+        <div class="q1description">
+          <h2>分段二次插值</h2>
+          <p>分段二次插值算法即将采样点分段处理，每两个间隙（每三个点）为一组，各自求二次插值多项式，再通过积分求出每一个分段的曲线长度，从而求得光缆的近似长度。</p>
+          <p>显然，二次插值比线性插值要顺滑一些，但是在分段端点上导数不连续。</p>
+          <p>要求二次插值多项式，应当先计算差商：</p>
+          <div>
+            $$
+              f[x_0, x_1] = \frac{f[x_1] - f[x_0]}{h}, \quad f[x_1, x_2] = \frac{f[x_2] - f[x_1]}{h}
+            $$
+          </div>
+          <div>
+            $$
+              f[x_0, x_1, x_2] = \frac{f[x_1, x_2] - f[x_0, x_1]}{2h}
+            $$
+          </div>
+          <p>由此得到二次插值多项式：</p>
+          <div>
+            $$
+              \begin{aligned}
+                L_2(x) &= f[x_0] + f[x_0, x_1](x - x_0) + f[x_0, x_1, x_2](x - x_0)(x - x_1) \\
+                &\xlongequal{\text{def.}} ax^2 + bx + c
+              \end{aligned}
+            $$
+          </div>
+          <p>再通过积分求区间内的曲线长度：</p>
+          <div>
+            $$
+              \begin{aligned}
+                l &= \int_{x_0}^{x_2} \sqrt{1 + [L_2^{\prime}(x)]^2} \mathrm d x
+                = \int_{x_0}^{x_2} \sqrt{1 + (2ax + b)^2} \mathrm d x \\
+                &= \left.\frac{(2a + b)\sqrt{1 + (2ax + b)^2} + \sinh^{-1}(2a + b)}{4a}\right|_{x_0}^{x_2}
+              \end{aligned}
+            $$
+          </div>
+        </div>
+        <div class="q1description">
+          <h2>三次样条插值</h2>
+          <p>对于海底光缆铺设的问题，应有如下形式的三次样条插值函数：</p>
+          <div>
+            $$
+              \begin{aligned}
+              S(x) = &\frac{(x_i-x)^3}{6h}M_{i-1} + \frac{(x-x_{i-1})^3}{6h}M_i \\
+              &+ \left(\frac1{h} y_{i-1}-\frac{h}6M_{i-1} \right)(x_i-x) + \left(\frac1{h} y_i-\frac{h}6M_i \right)(x-x_{i-1})
+            \end{aligned}
+            $$
+          </div>
+          <p>其中 \(x\in[x_{i-1}, x_i]\)，\(M_i\) 由如下方程确定（第三种边界条件，周期）：</p>
+          <div>
+            $$
+              \begin{bmatrix}
+              2 & 0.5 &&& 0.5 \\
+              0.5 & 2 & 0.5 \\
+              & \ddots & \ddots & \ddots \\
+              && 0.5 & 2 & 0.5 \\
+              0.5 &&& 0.5 & 2
+              \end{bmatrix}
+              \begin{bmatrix}
+              M_1 \\ M_2 \\ \vdots \\
+              M_{n-2} \\ M_{n-1}
+              \end{bmatrix} = 
+              \begin{bmatrix}
+              d_1\\
+              d_2 \\ \vdots \\ d_{n-2} \\
+              d_{n-1}
+              \end{bmatrix}
+            $$
+          </div>
+          <p>求得三次样条插值函数后，再使用龙贝格积分公式求出每段曲线长度。</p>
         </div>
       </div>
       <div class="block" id="q2block">
@@ -98,14 +184,22 @@
               <span>有效数字：</span>
               <label id="q3precision" contenteditable="true">4</label>
             </span>
-            <a id="q3download" class="round-ends-label clickable" style="margin-left: 10px; text-decoration: none;">保存结果</a>
+            <a id="q3download" class="round-ends-label clickable"
+              style="margin-left: 10px; text-decoration: none;">保存结果</a>
           </div>
         </div>
       </div>
     </div>
   </div>
   <script>
-    
+    window.addEventListener('load', () => {
+      renderMathInElement(window, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "\(", right: "\)", display: false }
+        ]
+      })
+    })
   </script>
   <script src="q3script.js"></script>
   <script src="q1script.js"></script>
