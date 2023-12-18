@@ -218,19 +218,14 @@ Matrix.prototype.solve = function (constVec) {
   }
   // 上行
   let ans = new Array(constVec.nRows())
-  for (let row = this.nRows() - 1; row > 0; row--) {
-    // 当前行仅剩一个元素，可以直接解出
-    ans[row] = [constVec.entry(row, 0) / this.entry(row, row)]
-    for (let i = row - 1; i >= 0; i--) {
-      if (this.entry(i, row) == 0) continue
-      let scalar = -this.entry(i, row) / this.entry(row, row)
-      this.scaleAdd(scalar, row, i)
-      constVec.scaleAdd(scalar, row, i)
-      // 避免因误差导致的无法消元的情况
-      if (this.entry(i, row) != 0) this.entry(i, row, 0)
+  for (let row = this.nRows() - 1; row >= 0; row--) {
+    let bBias = 0
+    for (let i = row + 1; i < constVec.nRows(); i++) {
+      if (this.entry(row, i) == 0) continue
+      bBias += this.entry(row, i) * ans[i]
     }
+    ans[row] = [(constVec.entry(row, 0) - bBias) / this.entry(row, row)]
   }
-  ans[0] = [constVec.entry(0, 0) / this.entry(0, 0)]
   return new Matrix(ans)
 }
 
@@ -416,7 +411,7 @@ fileInput.addEventListener('change', (ev) => {
     for (let i = 0; i < 5; i++) {
       fileInfoTds[i].innerText = infoList[i];
     }
-
+    fileInfoTds[fileInfoTds.length - 1].innerText = '0.0ms'
 
     const dataArray = new Float32Array(fileContent.slice(24))
 
