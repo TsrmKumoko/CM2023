@@ -1,5 +1,5 @@
 let depthArray = [341.96, 311.10, 315.74, 324.49, 321.14, 333.09, 318.68, 338.88, 325.66, 309.84, 328.62, 321.80, 320.74, 308.30, 328.45, 312.62, 317.83, 327.40, 323.75, 313.48, 316.66, 340.19, 332.40, 319.20, 334.64, 311.43, 328.92, 314.11, 319.84, 321.28, 333.84, 319.68, 321.20, 320.89, 325.90, 335.28, 332.00, 324.47, 313.36, 330.60, 322.32, 315.10, 319.89, 316.75, 321.92, 327.64, 320.40, 329.88, 332.00, 344.35, 348.41]
-const xDistance = 100
+const xUnit = 100
 
 const minDepth = 300
 const maxDepth = 350
@@ -140,7 +140,7 @@ function segLinInterp(depthArray) {
     ans = idx == 0 ? 0 : value - prev
     prev = value
     return ans
-  }).reduce((pre, cur) => pre + Math.sqrt(cur * cur + xDistance * xDistance))
+  }).reduce((pre, cur) => pre + Math.sqrt(cur * cur + xUnit * xUnit))
 }
 
 // 绘制直线
@@ -156,6 +156,129 @@ drawCurve[0] = function drawSegLin(depthArray) {
   q1ctx.stroke()
 }
 
+let segQuaCoeff = []
+/**
+ * 分段二次插值算法计算海底光缆长度
+ * @param {Array.<number>} depthArray 海底深度列表
+ */
 function segQuaInterp(depthArray) {
-  
+  segQuaCoeff = []
+  let sumLen = 0
+  let f0, f1, f2, f01, f12, f012, a, b, c
+  // 二次函数曲线长度（不定积分结果）
+  function curveLenInt(x, a, b) {
+    let _2axb = 2 * a * x + b
+    let ans = _2axb * Math.sqrt(1 + _2axb * _2axb)
+    ans += Math.asinh(_2axb)
+    ans /= 4 * a
+    return ans
+  }
+  // 牛顿插值多项式
+  for (let i = 0; i < depthArray.length - 1; i += 2) {
+    f0 = depthArray[i]
+    f1 = depthArray[i + 1]
+    f2 = depthArray[i + 2]
+    f01 = (f1 - f0) / xUnit
+    f12 = (f2 - f1) / xUnit
+    f012 = (f12 - f01) / xUnit / 2
+    // segQuaCoef.push((x) => f0 + (x - i * xUnit) * (f01 + f012 * (x - (i + 1) * xUnit)))
+    c = f0 - f01 * i * xUnit + f012 * i * (i + 1) * xUnit * xUnit
+    b = f01 - f012 * (2 * i + 1) * xUnit
+    a = f012
+    segQuaCoeff.push([a, b, c])
+    sumLen += curveLenInt((i + 2) * xUnit, a, b)
+    sumLen -= curveLenInt(i * xUnit, a, b)
+  }
+  return sumLen
 }
+
+segLinInterp(depthArray)
+drawCurve[1] = function drawQuaCur(depthArray) {
+  q1ctx.strokeStyle = '#456789'
+  q1ctx.lineWidth = 2
+  q1ctx.setLineDash([])
+  q1ctx.beginPath()
+  for (let i = 0; i < depthArray.length - 1; i += 2) {
+    if (i == 0) q1ctx.moveTo(...q1Data2Disp(i, depthArray[i]))
+    // 将区间(i, i+2]分为n份
+    let nPoints = 20
+    let nUnit = 2 / nPoints
+    // 创建(i, i+2]的linspace
+    let pointArr = new Array(nPoints).fill(i)
+    pointArr = pointArr.map((value, idx) => value + (idx + 1) * nUnit)
+    pointArr.forEach((value) => {
+      let x = value * xUnit
+      let a, b, c
+      [a, b, c] = segQuaCoeff[Math.round(i / 2)]
+      let depth = c + (b + a * x) * x
+      q1ctx.lineTo(...q1Data2Disp(value, depth))
+    })
+  }
+  q1ctx.stroke()
+}
+
+let splTriCoeff = []
+/**
+ * 三次样条插值算法计算海底光缆长度
+ * @param {Array.<number>} depthArray 海底深度列表
+ */
+function splTriInterp(depthArray) {
+  // 求出三次样条插值的系数矩阵，阶数应当为序列长度51
+  let order = depthArray.length
+  let coeffArr = new Array(order)
+  coeffArr.fill([0.5, 2, 0.2])
+  let coeffMat = new BandMatrix(coeffArr, 1, 1)
+  let constArr = new Array(order).fill(0)
+  let depth = (idx) => {
+    if (idx < 0) idx += order
+    if (idx >= order) idx -= order
+    return depthArray[idx]
+  }
+  constArr = constArr.map((val, idx) => {
+    let f0, f1, f2, f01, f12, f012
+    [f0, f1, f2] = [depth(idx - 1), depth(idx), depth(idx + 1)]
+    f01 = (f1 - f0) / xUnit
+    f12 = (f2 - f1) / xUnit
+    f012 = (f12 - f01) / xUnit / 2
+    return 6 * f012
+  })
+  let constMat = new Matrix([constArr]).transpose()
+  let ansMat = coeffMat.solve(constMat).transpose()
+  splTriCoeff = ansMat.entries[0] // 求出了M0-M50
+}
+
+splTriInterp(depthArray)
+drawCurve[2] = function drawSplCur(depthArray) {
+  q1ctx.strokeStyle = '#456789'
+  q1ctx.lineWidth = 2
+  q1ctx.setLineDash([])
+  q1ctx.beginPath()
+  for (let i = 0; i < depthArray.length - 1; i++) {
+    if (i == 0) q1ctx.moveTo(...q1Data2Disp(i, depthArray[i]))
+    // 将区间(i, i+1]分为n份
+    let nPoints = 10
+    let nUnit = 1 / nPoints
+    // 创建(i, i+1]的linspace
+    let pointArr = new Array(nPoints).fill(i)
+    pointArr = pointArr.map((value, idx) => value + (idx + 1) * nUnit)
+    // 区间的左右边界（米）
+    let x0 = i * xUnit
+    let x1 = (i + 1) * xUnit
+    let y0 = depthArray[i]
+    let y1 = depthArray[i + 1]
+    let M0 = splTriCoeff[i]
+    let M1 = splTriCoeff[i + 1]
+    pointArr.forEach((value) => {
+      let x = value * xUnit
+      let depth = (x1 - x) * (x1 - x) * (x1 - x) * M0 / xUnit / 6
+      depth += (x - x0) * (x - x0) * (x - x0) * M1 / xUnit / 6
+      depth += (x1 - x) * (y0 / xUnit - M0 * xUnit / 6)
+      depth += (x - x0) * (y1 / xUnit - M1 * xUnit / 6)
+      q1ctx.lineTo(...q1Data2Disp(value, depth))
+    })
+  }
+  q1ctx.stroke()
+}
+
+console.log(segLinInterp(depthArray))
+console.log(segQuaInterp(depthArray))

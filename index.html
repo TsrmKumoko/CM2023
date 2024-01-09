@@ -72,7 +72,7 @@
           <p>分段线性插值算法的光缆长度估算公式为：</p>
           <div>
             $$
-              L = \sum_{i=1}^{50} \sqrt{(d_i - d_{i-1})^2 + h^2}
+              l = \sum_{i=1}^{50} \sqrt{(d_i - d_{i-1})^2 + h^2}
             $$
           </div>
           <p>其中 \(d_i\) 是第 \(i\) 个点的深度，\(h\) 是相邻两点的水平距离。</p>
@@ -107,7 +107,7 @@
               \begin{aligned}
                 l &= \int_{x_0}^{x_2} \sqrt{1 + [L_2^{\prime}(x)]^2} \mathrm d x
                 = \int_{x_0}^{x_2} \sqrt{1 + (2ax + b)^2} \mathrm d x \\
-                &= \left.\frac{(2a + b)\sqrt{1 + (2ax + b)^2} + \sinh^{-1}(2a + b)}{4a}\right|_{x_0}^{x_2}
+                &= \left.\frac{(2a + b)\sqrt{1 + (2ax + b)^2} + \sinh^{-1}(2ax + b)}{4a}\right|_{x_0}^{x_2}
               \end{aligned}
             $$
           </div>
@@ -123,7 +123,7 @@
             \end{aligned}
             $$
           </div>
-          <p>其中 \(x\in[x_{i-1}, x_i]\)，\(M_i\) 由如下方程确定（第三种边界条件，周期）：</p>
+          <p>其中 \(x\in[x_{i-1}, x_i]\)，\(M_i\) 由如下方程确定（将海底深度表格函数视为周期为 \(5100\rm m\) 的周期函数）：</p>
           <div>
             $$
               \begin{bmatrix}
@@ -134,17 +134,18 @@
               0.5 &&& 0.5 & 2
               \end{bmatrix}
               \begin{bmatrix}
-              M_1 \\ M_2 \\ \vdots \\
-              M_{n-2} \\ M_{n-1}
+              M_0 \\ M_1 \\ \vdots \\
+              M_{n-1} \\ M_n
               \end{bmatrix} = 
               \begin{bmatrix}
               d_1\\
-              d_2 \\ \vdots \\ d_{n-2} \\
-              d_{n-1}
+              d_2 \\ \vdots \\ d_{n-1} \\
+              d_n
               \end{bmatrix}
             $$
           </div>
-          <p>求得三次样条插值函数后，再使用龙贝格积分公式求出每段曲线长度。</p>
+          <p>求得三次样条插值函数后，再使用龙贝格积分法求出每段曲线长度。</p>
+          <p>结果需要精确到小数点后一位，即误差限为 \(0.5\times10^{-1}\)，分摊到 50 个分段上，每个分段的误差限应为 \(10^{-3}\)。</p>
         </div>
       </div>
       <div class="block" id="q2block">
