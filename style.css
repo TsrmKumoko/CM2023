@@ -190,6 +190,11 @@ table {
   outline: none;
 }
 
+.dropdown-box {
+  position: relative;
+  width: 150px;
+}
+
 .dropdown-arrow {
   width: 0;
   height: 0;
@@ -206,6 +211,7 @@ table {
 
 .dropdown {
   position: absolute;
+  z-index: -1;
   opacity: 0;
   margin-top: 15px;
   padding: 5px 20px;
@@ -217,7 +223,9 @@ table {
 }
 
 .dropdown.active {
+  z-index: 0;
   opacity: 1;
+  transition: 0.3s opacity ease-in-out;
 }
 
 .dropdown-option {
@@ -246,6 +254,11 @@ table {
 }
 
 .q1description {
+  display: none;
   max-width: 800px;
   margin: auto;
+}
+
+.q1description.active {
+  display: block;
 }
