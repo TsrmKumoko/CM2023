@@ -75,6 +75,7 @@ function drawRefVals() {
 
 // 绘制曲线函数列表
 let drawCurve = new Array(3).fill(() => { return })
+let cableLengths = new Array(3).fill(0)
 
 // 向q1ctx中添加绘制散点函数
 q1ctx.node = function (x, y) {
@@ -99,13 +100,22 @@ function drawAllNodes() {
     q1ctx.node(...q1Data2Disp(idx, depth))
   })
 }
-// drawAllNodes()
+
+// 在左上角绘制总长度文字
+function drawLenText() {
+  q1ctx.font = '24px Avenir'
+  q1ctx.fillStyle = '#456789'
+  q1ctx.fillText(`总长度：${cableLengths[algrsmIdx].toFixed(1)}m`, 70, 48)
+}
 
 function drawAllThings() {
   q1ctx.clearRect(0, 0, canvasWidth * q1ctx.scale, canvasHeight * q1ctx.scale)
   drawRefLines()
   drawAllNodes()
-  if (algrsmIdx != -1) drawCurve[algrsmIdx](depthArray)
+  if (algrsmIdx != -1) {
+    drawCurve[algrsmIdx](depthArray)
+    drawLenText()
+  }
   drawRefVals()
 }
 drawAllThings()
@@ -192,7 +202,6 @@ function segQuaInterp(depthArray) {
   return sumLen
 }
 
-segLinInterp(depthArray)
 drawCurve[1] = function drawQuaCur(depthArray) {
   q1ctx.strokeStyle = '#456789'
   q1ctx.lineWidth = 2
@@ -283,7 +292,6 @@ function splTriInterp(depthArray) {
   return splInt
 }
 
-splTriInterp(depthArray)
 drawCurve[2] = function drawSplCur(depthArray) {
   q1ctx.strokeStyle = '#456789'
   q1ctx.lineWidth = 2
@@ -316,6 +324,9 @@ drawCurve[2] = function drawSplCur(depthArray) {
   q1ctx.stroke()
 }
 
-console.log(segLinInterp(depthArray))
-console.log(segQuaInterp(depthArray))
-console.log(splTriInterp(depthArray))
+cableLengths = [
+  segLinInterp(depthArray),
+  segQuaInterp(depthArray),
+  splTriInterp(depthArray)
+]
+
