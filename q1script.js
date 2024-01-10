@@ -245,6 +245,42 @@ function splTriInterp(depthArray) {
   let constMat = new Matrix([constArr]).transpose()
   let ansMat = coeffMat.solve(constMat).transpose()
   splTriCoeff = ansMat.entries[0] // 求出了M0-M50
+  // 求每个分段上的积分，误差限1e-3
+  let x0, x1, y0, y1, M0, M1
+  function Sl(x) {
+    let fnVal = -(x1 - x) * (x1 - x) * M0 / xUnit / 2
+    fnVal += (x - x0) * (x - x0) * M1 / xUnit / 2
+    fnVal += -(y0 / xUnit - M0 * xUnit / 6)
+    fnVal += (y1 / xUnit - M1 * xUnit / 6)
+    return Math.sqrt(1 + fnVal * fnVal)
+  }
+  function rbgInt(time, order) {
+    if (order == 0 && time == 0) {
+      return xUnit / 2 * (Sl(x0) + Sl(x1))
+    } else if (order == 0 && time > 0) {
+      let step = xUnit / Math.pow(2, time)
+      let sum = 0
+      for (let i = 1; i <= Math.pow(2, time - 1); i++) {
+        sum += Sl(x0 + (2 * i - 1) * step)
+      }
+      return rbgInt(time - 1, order) / 2 + step * sum
+    } else if (order > 0) {
+      return rbgInt(time + 1, order - 1) + (rbgInt(time + 1, order - 1) - rbgInt(time, order - 1)) / (Math.pow(4, order) - 1)
+    }
+  }
+  let splInt = 0
+  for (let i = 0; i < depthArray.length - 1; i++) {
+    x0 = i * xUnit
+    x1 = (i + 1) * xUnit
+    y0 = depthArray[i]
+    y1 = depthArray[i + 1]
+    M0 = splTriCoeff[i]
+    M1 = splTriCoeff[i + 1]
+    let time = 1
+    while (Math.abs(rbgInt(time, 3) - rbgInt(time - 1, 3)) >= 1e-3) time += 1
+    splInt += rbgInt(time, 3)
+  }
+  return splInt
 }
 
 splTriInterp(depthArray)
@@ -282,3 +318,4 @@ drawCurve[2] = function drawSplCur(depthArray) {
 
 console.log(segLinInterp(depthArray))
 console.log(segQuaInterp(depthArray))
+console.log(splTriInterp(depthArray))
