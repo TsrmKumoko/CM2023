@@ -35,7 +35,9 @@
       </div>
       <div class="navblock infoli">
         <div class="info">Info:</div>
-        <div class="info">这个网页是2023年计算方法上机题目的在线演示 <del>(JavaScript果然很方便呢！)</del></div>
+        <div class="info">此网页是2023年计算方法上机题目演示。</div>
+        <div class="info">所有的结果都是本地实时计算的，而不是读取已经计算好的数值。<span style="color: grey;">（这一点可以通过查看源代码来验证）</span></div>
+        <div class="info">请使用宽屏设备（例如电脑或平板）查看网页以获得最好的浏览体验。此网页没有针对手机作适配。</div>
         <div class="info">源代码已经公开在了我的<a href="https://github.com/TsrmKumoko/CM2023">GitHub仓库</a></div>
         <div class="info">完整的上机报告放在了<a
             href="https://thankful-magician-400.notion.site/151a6f3eba444b19ba4604f7557848cc?pvs=4">徐云岫’s Notion</a>
@@ -155,6 +157,35 @@
       </div>
       <div class="block" id="q2block">
         <h1>Q2: 粉丝数量分析</h1>
+        <div class="q2description">
+          <p>粉丝数量变化模型非常复杂，它涉及很多变量，例如平台推送算法、作品的发布频率与质量、艺人原本积累的人气等等，想要分析出准确的粉丝数量变化模型，需要更多艺人和更长时间的数据。这里将问题简单地转化为函数拟合问题来求解。</p>
+          <p>记第 \(i\) 天的粉丝数量为 \(y_i\)，\(i\) 从 \(1\) 开始，代表刀郎入驻抖音的第1天2023年8月16日。</p>
+          <p>考虑到指数函数有类似的增长趋势，设</p>
+          <div>
+            $$
+              y_i\approx p_i = a\mathrm e^{b/i}, \quad
+              \ln y_i \approx \ln p_i = \ln a + \frac bi
+            $$
+          </div>
+          <p>取 \(\phi_0 = 1\)，\(\phi_1 = i^{-1}\)，则有如下的正规方程组：</p>
+          <div>
+            $$
+              \begin{bmatrix}
+                n & \displaystyle\sum_{i=1}^n \frac1i \\
+                \displaystyle\sum_{i=1}^n \frac1i & \displaystyle\sum_{i=1}^n \frac1{i^2}
+              \end{bmatrix}
+              \begin{bmatrix}
+                \ln a \\ b
+              \end{bmatrix} =
+              \begin{bmatrix}
+                \displaystyle\sum_{i=1}^n \ln y_i \\
+                \displaystyle\sum_{i=1}^n \frac{\ln y_i}i
+              \end{bmatrix}
+            $$
+          </div>
+          <p>解方程组得 \(\ln a\) 和 \(b\)，则粉丝数量的稳定值应当为 <span id="q2ans"></span>。图像如下：</p>
+          <p>可以观察到，这条曲线的拟合效果并不好，与源数据趋势相差较大。我们可以在源数据的第10天观察到一个明显的粉丝增速加快，猜测这一部分是导致拟合效果不好的原因。舍去前9天的数据，将第10天当作新的第1天再作计算，可以得到 <span id="q2ans-cut"></span>。图像如下：</p>
+        </div>
       </div>
       <div class="block" id="q3block">
         <div class="qhead">
