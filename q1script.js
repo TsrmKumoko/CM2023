@@ -51,6 +51,7 @@ q1Canvas.height = (parseInt(canvasHeight) * q1ctx.scale).toString()
 function drawRefLines() {
   q1ctx.strokeStyle = '#abcdef'
   q1ctx.setLineDash([10, 10])
+  q1ctx.lineWidth = 1
   for (let depth = minDepth; depth <= maxDepth; depth += 10) {
     let y = (depth - minDepth) * ratio + 20
     q1ctx.beginPath()
@@ -69,9 +70,6 @@ function drawRefVals() {
     q1ctx.fillText(depth.toString(), 10, y * q1ctx.scale + 8)
   }
 }
-
-// drawRefLines()
-// drawRefVals()
 
 // 绘制曲线函数列表
 let drawCurve = new Array(3).fill(() => { return })
