@@ -164,7 +164,7 @@ drawCurve[0] = function drawSegLin(depthArray) {
   q1ctx.stroke()
 }
 
-let segQuaCoeff = []
+let segQuaCoeff = [] // 存放二次函数参数
 /**
  * 分段二次插值算法计算海底光缆长度
  * @param {Array.<number>} depthArray 海底深度列表
@@ -189,7 +189,6 @@ function segQuaInterp(depthArray) {
     f01 = (f1 - f0) / xUnit
     f12 = (f2 - f1) / xUnit
     f012 = (f12 - f01) / xUnit / 2
-    // segQuaCoef.push((x) => f0 + (x - i * xUnit) * (f01 + f012 * (x - (i + 1) * xUnit)))
     c = f0 - f01 * i * xUnit + f012 * i * (i + 1) * xUnit * xUnit
     b = f01 - f012 * (2 * i + 1) * xUnit
     a = f012
@@ -224,7 +223,7 @@ drawCurve[1] = function drawQuaCur(depthArray) {
   q1ctx.stroke()
 }
 
-let splTriCoeff = []
+let splTriCoeff = [] // 存放样条函数参数
 /**
  * 三次样条插值算法计算海底光缆长度
  * @param {Array.<number>} depthArray 海底深度列表
